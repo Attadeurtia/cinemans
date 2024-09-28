@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinéma</title>
+    <link rel="stylesheet" href="films.css">
+</head>
+<body>
+    <header>
+        <h1>Cinéma</h1>
+        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+
+    </header>
+    <main>
+        <div id="map" style="height: 75vh; width: 100%;"></div>
+        <section class="movies">
+            <div class="movie">
+                <img src="affiche1.jpg" alt="Affiche du film 1">
+                <div class="movie-info">
+                    <h2>Titre du film 1</h2>
+                    <p>Réalisateur: Nom du réalisateur</p>
+                    <p>Durée: 2h 30min</p>
+                    <p>Séances: 14h, 17h, 20h</p>
+                </div>
+            </div>
+            <div class="movie">
+                <img src="affiche2.jpg" alt="Affiche du film 2">
+                <div class="movie-info">
+                    <h2>Titre du film 2</h2>
+                    <p>Réalisateur: Nom du réalisateur</p>
+                    <p>Durée: 1h 45min</p>
+                    <p>Séances: 15h, 18h, 21h</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
