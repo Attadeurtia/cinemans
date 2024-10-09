@@ -17,6 +17,9 @@ def get_movie_info(url):
     # Liste pour stocker les informations des films
     movies = []
 
+    NomCIne = soup.find('div', class_='header-theater-title')
+    cine = NomCIne.get_text(strip=True) if NomCIne else None
+
     # Trouver tous les blocs de films
     movie_blocks = soup.find_all('div', class_='card entity-card entity-card-list movie-card-theater cf hred')
 
@@ -102,6 +105,7 @@ def get_movie_info(url):
         # Stocker les informations dans un dictionnaire
         movie_info = {
             'id': film_id,
+            'nomCine': cine,
             'title': title,
             'genres': genres,
             'dates': dates,
@@ -122,6 +126,7 @@ url = 'https://www.allocine.fr/seance/salle_gen_csalle=P8501.html'
 
 # Appeler la fonction pour récupérer les informations des films
 movies_info = get_movie_info(url)
+print(movies_info)
 
 
 
