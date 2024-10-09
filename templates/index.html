@@ -1,21 +1,26 @@
+<!DOCTYPE html>
+<html>
 <head>
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-
+    <title>Firestore Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
-    <div class="App">
-        <header class="App-header">
-            <img src="{{ url_for('static', filename='Octocat.png') }}" class="App-logo" alt="logo" />
-            <p>
-                GitHub Codespaces <span class="heart">♥️</span> Flask
-            </p>
-            <p class="small">
-                Edit <code>templates/index.html</code> and refresh to see your changes!
-            </p>
-        </header>
+    <h1>Cinémans</h1>
+    <div class="movies-container">
+        {% for item in data %}
+            <div class="movie-card">
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="movie-image">
+                <div class="movie-details">
+                    <h2>{{ item.title }}</h2>
+                    <p>Réalisateur: {{ item.director }}</p>
+                    <p>Sortie: {{ item.dates | join(', ') }}</p>
+                    <p>Genres: {{ item.genres | join(', ') }}</p>
+                    <p>Durée: {{ item.duration if item.duration else 'N/A' }}</p>
+                    <p>Séances: {{ item.showtimes | join(', ') if item.showtimes else 'N/A' }}</p>
+                    <p>Versions: {{ item.versions | join(', ') if item.versions else 'N/A' }}</p>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-
-    {% include 'films/films.html' %}
 </body>
-
 </html>

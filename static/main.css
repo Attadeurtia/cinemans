@@ -43,3 +43,9 @@ code {
 .small {
     font-size: 0.75rem;
 }
+
+h1 {
+    font-size: 15rem;
+    margin: 0;
+}
+

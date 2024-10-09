@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firestore Data Display</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+  <h1>Firestore Data</h1>
+  <ul id="movie-list"></ul>
+
+  <script>
+    // Replace placeholders with your Firebase project details
+    const firebaseConfig = {
+    apiKey: "AIzaSyA1ZGaMZlP4SiNmdpy2JvcF01ObNwkvodc",
+    authDomain: "cinemans.firebaseapp.com",
+    projectId: "cinemans",
+    storageBucket: "cinemans.appspot.com",
+    messagingSenderId: "11502849443",
+    appId: "1:11502849443:web:ae99370371a5e94cf09e16"
+  };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Get a reference to the Firestore database
+    const db = firebase.firestore();
+
+    // Fetch data from the 'movies' collection
+    db.collection('movies').get()
+      .then(snapshot => {
+        const movieList = document.getElementById('movie-list');
+
+        snapshot.forEach(doc => {
+          const movie = doc.data();
+          const listItem = document.createElement('li');
+          listItem.textContent = `${movie.title} - ${movie.year}`;
+          movieList.appendChild(listItem);
+        });
+      })
+      .catch(error => {
+        console.error("Error getting documents: ", error);
+      });
+  </script>
+</body>
+</html>

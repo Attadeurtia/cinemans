@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Données du Film</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>Données du Films</h1>
+<div id="movies-container"></div>
+
+<script>
+    // Configuration de Firebase
+    const firebaseConfig = {
+    apiKey: "AIzaSyA1ZGaMZlP4SiNmdpy2JvcF01ObNwkvodc",
+    authDomain: "cinemans.firebaseapp.com",
+    projectId: "cinemans",
+    storageBucket: "cinemans.appspot.com",
+    messagingSenderId: "11502849443",
+    appId: "1:11502849443:web:ae99370371a5e94cf09e16"
+  };
+
+    // Initialiser Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Fonction pour récupérer et afficher les données du film
+    function fetchMovieData() {
+        db.collection("movies").doc("movieId").get().then((doc) => {
+            if (doc.exists) {
+                const movieData = doc.data();
+                const container = document.getElementById('movies-container');
+                container.innerHTML = `
+                    <h2>${movieData.title}</h2>
+                    <p><strong>Genres:</strong> ${movieData.genres.join(', ')}</p>
+                    <p><strong>Dates:</strong> ${movieData.dates.join(', ')}</p>
+                    <p><strong>Durée:</strong> ${movieData.duration ? movieData.duration : 'Non spécifiée'}</p>
+                    <p><strong>Réalisateur:</strong> ${movieData.director}</p>
+                    <p><strong>Horaires:</strong> ${movieData.showtimes.join(', ')}</p>
+                    <p><strong>Versions:</strong> ${movieData.versions.length > 0 ? movieData.versions.join(', ') : 'Aucune'}</p>
+                `;
+            } else {
+                console.log("Aucun document trouvé !");
+            }
+        }).catch((error) => {
+            console.log("Erreur lors de la récupération du document:", error);
+        });
+    }
+
+    // Appeler la fonction pour récupérer et afficher les données du film
+    fetchMovieData();
+</script>
+
+</body>
+</html>
