@@ -2,92 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-
-
-def info_film(url):
-    
-    response = requests.get(url)
-    if response.status_code == 200:
-
-        soup = BeautifulSoup(response.content, "html.parser")
-
-        # Extraire le titre de la page
-        div = soup.find("div", class_="titlebar-title titlebar-title-xl")
-        # Vérifier si l'élément a été trouvé
-        if div is not None:
-            # Extraire le texte
-            text = div.text
-            print(f"Titre: {text}")
-        else:
-            print("L'élément <div> n'a pas été trouvé.")
-
-        # Trouver le réalisateur dans la balise meta
-        director_meta = soup.find("meta", property="video:director")
-        director_name = (
-            director_meta["content"]
-            if director_meta and "content" in director_meta.attrs
-            else "Réalisateur non trouvé"
-        )
-
-        print(f"Redirecteur: {director_name}")
-
-        # Trouver la section des informations du film
-        info_div = soup.find("div", class_="meta-body-info")
-
-        if info_div:
-            # Récupérer la date de sortie
-            release_date = (
-                info_div.find("span", class_="blue-link").text.strip()
-                if info_div.find("span", class_="blue-link")
-                else "Date non trouvée"
-            )
-
-            # Récupérer la durée
-            duration = [
-                span for span in info_div.find_all("span") if span.text.strip() != ""
-            ]
-            duration_text = (
-                duration[1].text.strip() if len(duration) > 1 else "Durée non trouvée"
-            )
-
-            # Récupérer les genres
-            genre_links = info_div.find_all("span", class_="dark-grey-link")
-            # affiche = info_div.find_all('a', class_='xXx dark-grey-link')
-            genres = [genre.text for genre in genre_links]  # Récupérer les noms des genres
-        else:
-            release_date = "Informations non trouvées"
-            duration_text = "Informations non trouvées"
-            genres = []
-
-        # Utiliser une expression régulière pour trouver la durée
-        duration_match = re.search(r"(\d+\s*h\s*\d+\s*min)", info_div.prettify())
-
-        if duration_match:
-            duration = duration_match.group(1)  # Récupérer le texte correspondant
-        else:
-            print("Durée non trouvée")
-
-        print(f"Durée: {duration}")
-        print(f"Date de sortie: {release_date}")
-        print(f"Durée: {duration_text}")
-        print(f'Genres: {", ".join(genres)}')
-
-
-    else:
-        print(f"Erreur lors de la récupération de la page : {response.status_code}")
-
-    film_data = {
-        "titre": text,
-        "realisateur": director_name,
-        "date_de_sortie": release_date,
-        "duree": duration_text,
-        "genres": genres,
-    }
-
-    return film_data
-
-
-
 def get_movie_info(url):
     # Faire une requête pour obtenir le contenu de la page
     response = requests.get(url)
@@ -107,13 +21,23 @@ def get_movie_info(url):
     movie_blocks = soup.find_all('div', class_='card entity-card entity-card-list movie-card-theater cf hred')
 
     for block in movie_blocks:
-        # Récupérer l'image
-        #img_tag = block.find('img', class_='thumbnail-img')
-        #image_url = img_tag['data-src'] if img_tag else None
+
+        # Récupérer l'ID du film
+        title_link = block.find('a', class_='meta-title-link')
+        if title_link and 'href' in title_link.attrs:
+            href = title_link['href']
+            # Extraire l'ID du film de l'URL
+            film_id = href.split('=')[-1]  # Récupérer l'ID après le signe '='
+            #supprimer le .html
+            film_id = film_id.split('.')[0]
+            print(f"ID du film : {film_id}")
+        
         
         # Récupérer le titre
         title_tag = block.find('h2', class_='meta-title')
         title = title_tag.get_text(strip=True) if title_tag else None
+
+        print(title)
         
         # Récupérer les genres
         genres = []
@@ -122,9 +46,13 @@ def get_movie_info(url):
             genre_tags = info_div.find_all('span', class_='dark-grey-link')
             genres = [genre.get_text(strip=True) for genre in genre_tags]
 
+        print(genres)
+
         # Récupérer les différentes dates
         date_tags = info_div.find_all('span', class_='date')
         dates = [date.get_text(strip=True) for date in date_tags] if date_tags else []
+
+        print(dates)
 
         # Récupérer la durée
         duration_match = re.search(r'(\d+\s*h\s*\d+\s*min)', str(info_div))
@@ -152,18 +80,48 @@ def get_movie_info(url):
                 elif 'VO' in version_text:
                     versions.append('VO')
 
+        # Trouver toutes les images avec la classe 'thumbnail-img'
+        img_tags = block.find_all('img', class_='thumbnail-img')
+
+        # Liste pour stocker les URLs des images qui se terminent par .jpeg
+        jpeg_images = []
+
+        # Vérifier chaque image pour le lien data-src
+        for img_tag in img_tags:
+            if 'data-src' in img_tag.attrs:
+                image_url = img_tag['data-src']
+                # Vérifier si l'URL se termine par .jpeg
+                if image_url.endswith('.jpg'):
+                    jpeg_images.append(image_url)
+
+        # Afficher les résultats
+        print("Images .jpg trouvées :")
+        for url in jpeg_images:
+            print(url)
+
         # Stocker les informations dans un dictionnaire
         movie_info = {
+            'id': film_id,
             'title': title,
-            #'image': image_url,
             'genres': genres,
             'dates': dates,
             'duration': duration,
             'director': director,
             "showtimes": showtimes,
-            'versions': list(set(versions))  # Pour éviter les doublons
+            'versions': list(set(versions)),  # Pour éviter les doublons
+            "image": url
         }
         
         movies.append(movie_info)
 
     return movies
+
+
+# URL de la page à scraper
+url = 'https://www.allocine.fr/seance/salle_gen_csalle=P8501.html'
+
+# Appeler la fonction pour récupérer les informations des films
+movies_info = get_movie_info(url)
+
+
+
