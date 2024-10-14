@@ -17,9 +17,16 @@
                     <p>Sortie: {{ item.dates | join(', ') }}</p>
                     <p>Genres: {{ item.genres | join(', ') }}</p>
                     <p>Durée: {{ item.duration if item.duration else 'N/A' }}</p>
-                    <p>Séances: {{ item.showtimes | join(', ') if item.showtimes else 'N/A' }}</p>
+                    {% set cinema_names = item.Horaires | map(attribute='nomCine') | unique %}
+
+                    <p>Cinéma : {{ cinema_names | join(', ') }}</p>
+                    {% for horaire in item.Horaires %}
+                        <p>{{ horaire.nomCine }} : {{ horaire.showtimes| join(', ') }}</p>
+                    {% endfor %}
+                    
                     <p>Versions: {{ item.versions | join(', ') if item.versions else 'N/A' }}</p>
                 </div>
+                
             </div>
         {% endfor %}
     </div>

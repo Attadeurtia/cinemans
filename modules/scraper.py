@@ -74,7 +74,6 @@ def extract_movie_info(block, cine):
             'dates': dates,
             'duration': duration,
             'director': director,
-            "showtimes": showtimes,
             "Horaires": [
                 {"HoraireID": 1, "nomCine": cine, "showtimes": showtimes},
                 {"HoraireID": 1, "nomCine": cine, "showtimes": showtimes},
@@ -151,9 +150,12 @@ def get_movie_info2(url):
 
 # URL de la page à scraper
 url = 'https://www.allocine.fr/seance/salle_gen_csalle=P8501.html'
+url2 = 'https://www.allocine.fr/seance/salle_gen_csalle=W7201.html'
+
 
 # Appeler la fonction pour récupérer les informations des films
 movies_info = get_movie_info(url)
+movies_info = get_movie_info(url2)
 print(movies_info)
 
 
